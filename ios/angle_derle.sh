@@ -16,6 +16,7 @@ if [ ! -d depot_tools ]; then
 fi
 export PATH="$CALISMA/depot_tools:$PATH"
 export DEPOT_TOOLS_UPDATE=0
+"$CALISMA/depot_tools/ensure_bootstrap"
 
 if [ ! -d angle ]; then
   git clone --branch "$dal" --single-branch https://github.com/google/angle angle
