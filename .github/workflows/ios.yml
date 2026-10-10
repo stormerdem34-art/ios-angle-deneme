@@ -1,0 +1,54 @@
+name: iPhone deneme
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: iphone-deneme
+  cancel-in-progress: true
+
+jobs:
+  derle:
+    runs-on: macos-15
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: ANGLE onbellegi
+        id: angle
+        uses: actions/cache/restore@v4
+        with:
+          path: angle-cikti
+          key: angle-ios-${{ hashFiles('ios/angle_surum.txt', 'ios/angle_derle.sh') }}
+
+      - name: ANGLE'i kaynagindan derle
+        if: steps.angle.outputs.cache-hit != 'true'
+        run: bash ios/angle_derle.sh
+
+      - name: ANGLE'i onbellege kaydet
+        if: steps.angle.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: angle-cikti
+          key: angle-ios-${{ hashFiles('ios/angle_surum.txt', 'ios/angle_derle.sh') }}
+
+      - name: Uygulamayi derle
+        run: bash ios/uygulama_derle.sh
+
+      - name: Sonucu sakla
+        uses: actions/upload-artifact@v4
+        with:
+          name: MSP2Deneme
+          path: MSP2Deneme.ipa
+
+      - name: Indirme baglantisini guncelle
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete son --yes --cleanup-tag || true
+          gh release create son MSP2Deneme.ipa --title "Son deneme" --notes "$GITHUB_SHA" --target "$GITHUB_SHA"
