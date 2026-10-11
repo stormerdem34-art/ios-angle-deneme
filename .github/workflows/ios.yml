@@ -37,6 +37,16 @@ jobs:
           path: angle-cikti
           key: angle-ios-${{ hashFiles('ios/angle_surum.txt', 'ios/angle_derle.sh') }}
 
+      - name: ANGLE paketini yayinla
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          surum="$(cut -c1-8 angle-cikti/surum.txt)"
+          if ! gh release view "angle-$surum" >/dev/null 2>&1; then
+            (cd angle-cikti && zip -qry ../angle-ios.zip .)
+            gh release create "angle-$surum" angle-ios.zip --title "ANGLE iOS $surum" --notes "ANGLE kaynagindan, iOS arm64 aygit, Metal" --target "$GITHUB_SHA"
+          fi
+
       - name: Uygulamayi derle
         run: bash ios/uygulama_derle.sh
 
