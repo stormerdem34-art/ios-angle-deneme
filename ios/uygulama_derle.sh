@@ -15,7 +15,7 @@ xcrun -sdk iphoneos clang++ -arch arm64 -miphoneos-version-min=16.0 -isysroot "$
   -I "$ANGLE/include" -F "$ANGLE" \
   "$KOK/ios/uygulama/main.mm" \
   -framework libEGL -framework libGLESv2 \
-  -framework UIKit -framework QuartzCore -framework Metal -framework Foundation \
+  -framework UIKit -framework QuartzCore -framework Metal -framework CoreGraphics -framework Foundation \
   -Wl,-rpath,@executable_path/Frameworks \
   -o "$UYG/MSP2Deneme"
 
